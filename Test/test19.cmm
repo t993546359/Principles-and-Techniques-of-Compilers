@@ -1,0 +1,55 @@
+struct Position
+{
+    int a[10];
+    float b;
+    struct{
+       int f;
+     }c;
+}d;
+struct Position
+{
+    int kk;
+};
+struct Pos
+{
+    int jj;
+    float jj;
+};
+int s1;
+float s2;
+float func(int q,float w,struct Position e)
+{
+      int t1;
+      float t2=2.2;
+      int t3 = 1;
+      t4=11;
+      q+1.1;
+      w=10;
+      e.r;
+      e.c.f=5;
+      Position.b=1.1;
+      if(w==8)
+      {
+        return 1;
+      }
+      else return 1.1;
+}
+int func()
+{
+}
+int main()
+{
+	struct a A;
+    struct Position t1 = 2;
+    int a[10] = 2.2;
+    float b[2][3]= 2;
+    func();
+    s1(1);
+    func(1,1.1,hhh);
+    return func(s1,2.2,t1);
+    inc();
+    10=a;
+    s1[10];
+    a[1.5];
+    a.x;
+}
