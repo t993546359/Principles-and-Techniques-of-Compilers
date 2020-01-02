@@ -1,0 +1,11 @@
+int main()
+{
+        int f = 1;
+        int b = 4 + 2;
+        int a = b + 2;
+        int c = b - 4;
+        int d = c - b;
+        int e = a * b;
+        int h = b / b;
+        return 0;
+}

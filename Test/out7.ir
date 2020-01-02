@@ -1,0 +1,17 @@
+FUNCTION func :
+v1 := #4
+v2 := #2
+t3 := v1 + v2
+v2 := t3
+RETURN v2
+
+FUNCTION main :
+READ t5
+v3 := t5
+t7 := CALL func
+v4 := t7
+t8 := v4 + v3
+v4 := t8
+WRITE v4
+RETURN #0
+

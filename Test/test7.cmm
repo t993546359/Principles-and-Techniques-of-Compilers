@@ -1,0 +1,15 @@
+int func()
+{
+        int b = 4;
+        int c = 2;
+        c = b + c;
+        return c;
+}
+int main()
+{
+        int d = read();
+        int a = func();
+         a = a + d;
+         write(a);
+        return 0;
+}
