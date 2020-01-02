@@ -1,9 +1,28 @@
-int func(int i)
+int myco(int a, int b[17])
 {
-        return i;
+       int i=0;
+       while(i<17)
+       {
+          b[i]=(30-i)*2;
+          i=i+1;
+       }
+       if(a>6)
+          write(b[3]);
+       else if(a< -3)
+          write(b[11]);
+       else write(-a);
+       return 1;
 }
-
+int aa(int t)
+{
+    return (-t);
+    
+}
 int main()
 {
-        func(1,2);
+     int ll[17];
+     int k=8;
+     int gg=(myco(k,ll));
+     return 0;
+     
 }

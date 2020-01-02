@@ -1,5 +1,11 @@
+int aa(int t)
+{
+    return (-t);
+    
+}
 int main()
 {
-        int i[10];
-        i[1.5] = 10;
+     write(aa(8989));
+     return 0;
+     
 }

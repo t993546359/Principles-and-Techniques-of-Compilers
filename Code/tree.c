@@ -44,12 +44,14 @@ struct node* leafcreate(char* name, int lineno)
 			leaf->typeno = 3;
 		else if (!strcmp(leaf->nodename, "FLOAT"))
 			leaf->typeno = 4;
-		else
+        else if (!strcmp(leaf->nodename, "RELOP"))
+            leaf->typeno = 6;
+        else 
 			leaf->typeno = 5;//其他终结符
 	}
 
 	//如果叶子节点为特殊type，则把其yytext转换成char* 存下待后续处理
-	if (leaf->typeno < 5)
+	if (leaf->typeno < 5 || leaf->typeno == 6)
 	{
 		char* t = (char*)malloc(sizeof(char*) * 40);
 		strcpy(t, yytext);
@@ -177,4 +179,27 @@ void yyerror(char *s,...)
 //	vfprintf(stderr,s,ap);
 	fprintf(stderr,"\n");
 
+}
+void Free_tree(struct node *head)
+{
+        /*struct node * temp1,temp2,cld=head->cld,bro=head->bro;
+        while(cld!=NULL||bro!=NULL)
+        {
+            temp1=cld;
+            temp2=bro;
+            if(cld!=NULL)free(cld);
+            if(bro!=NULL)free(bro);
+            h=h->next;
+            free(temp->code);
+            free(temp);
+        }*/
+        struct node * temp;
+        struct node *h=head;
+        while(h!=NULL)
+        {
+            temp=h;
+            h=h->cld;
+            Free_tree(temp->bro);
+            free(temp);
+        }
 }

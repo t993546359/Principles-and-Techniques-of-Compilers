@@ -1,5 +1,10 @@
+int inc(int temp[2])
+{
+        return (temp[1] + temp[1]);
+}
 int main()
 {
-        int i,j;
-        int i;
+        int A[1][2];
+        A[1][0] = 5;
+        return A[1][0];
 }

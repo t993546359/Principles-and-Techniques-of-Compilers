@@ -1,10 +1,15 @@
-struct Position
+int aa(int k1,int k2)
 {
-        float x,y;
-};
-
+    return (k1-k2);
+    
+}
+int bb(int t1,int t2)
+{
+    return t1*2+t2;
+}
 int main()
 {
-        int i;
-        i.x;
+     write(bb(aa(3,9),aa(55,77)));
+     return 0;
+     
 }

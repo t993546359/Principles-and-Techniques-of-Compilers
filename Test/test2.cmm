@@ -1,4 +1,15 @@
-int main(){
+int inc(int j)
+{
+    int k;
+    k = 0;
+    j = k + 2 + 2;
+    return j;
+}
+
+int main()
+{
 	int i = 0;
-    inc(i);
+    int a;
+    a = inc(i);
+    return a;
 }

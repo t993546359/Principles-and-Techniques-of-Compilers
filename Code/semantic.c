@@ -6,6 +6,45 @@
 FieldList Head;
 FieldList Tail;
 int anonymous_count = 0;
+void Init_Func()
+{
+	//read
+	struct func *f1 = malloc(sizeof(struct func));
+	strcpy(f1->name, "read");
+	Type re1 = malloc(sizeof(struct Type_));
+	re1->kind = BASIC;
+	re1->basic = 1;
+	f1->retype = re1;
+	f1->pnum = 0;
+	f1->para = NULL;
+
+	//write
+	struct func *f2 = malloc(sizeof(struct func));
+	strcpy(f2->name, "write");
+
+	Type re2 = malloc(sizeof(struct Type_));
+	re2->kind = BASIC;
+	re2->basic = 1;
+
+	f2->retype = re2;
+	f2->pnum = 1;
+
+	Type pt = malloc(sizeof(struct Type_));
+	pt->kind = BASIC;
+	pt->basic = 1;
+
+	struct parameter *p = malloc(sizeof(struct parameter));
+	p->pnext = NULL;
+	p->ptype = pt;
+
+	f2->para = p;
+
+	f1->next = f2;
+	f2->next = NULL;
+
+	funcHead = f1;
+	funcTail = f2;
+}
 struct func* if_func_exist(char* funcname)
 {
 	struct func *temp = funcHead;
@@ -150,6 +189,9 @@ void Init_Hash()
 
 bool Insert_Symbol_Var(FieldList f)
 {
+        static int var_index = 1;
+        f->var_no = var_index;
+        var_index++;
        // printf("insert %s",f->name);        
         if(Head == NULL)
         {
@@ -244,6 +286,7 @@ Type Handle_Exp(struct node *ast)
 		struct func * myfun = if_func_exist(funcname);
 		if (myfun == NULL)
 		{
+        //    printf("??\n");
 			if (Search_Symbol_name(funcname) == NULL)//函数表里查不到此id
 			{
 				//变量表里也查不到此id，故为函数调用未定义
@@ -262,9 +305,9 @@ Type Handle_Exp(struct node *ast)
 			if (!strcmp(id->bro->bro->nodename, "Args"))//
 			{
 				struct node* args = id->bro->bro;
-				if (!if_para_match(myfun->para, Handle_Args(args)))
-					printf("Error type 9 at Line %d: Function %s is not applicable.\n", id->lineno, id->special_val);
-
+				//if (!if_para_match(myfun->para, Handle_Args(args)))
+				//	printf("Error type 9 at Line %d: Function %s is not applicable.\n", id->lineno, id->special_val);
+                
 			}
 			else//函数调用不带参数
 			{
@@ -315,6 +358,7 @@ Type Handle_Exp(struct node *ast)
                                 strcmp(Get_Child(ast,1)->nodename,"DOT" ) != 0) {
                         Type t1 = Handle_Exp(Get_Child(ast,0));
                         Type t2 = Handle_Exp(Get_Child(ast,2));
+
                         /*exp:|exp ASSIGNOP exp
                         */
                         if(Get_Child(ast,1)->typeno == 5 && \
@@ -325,7 +369,7 @@ Type Handle_Exp(struct node *ast)
                                                 strcmp(Get_Child(ast->cld,0)->nodename,"ID" ) == 0)
                                         ;
                                 else if(Count_Child(ast->cld) == 4 &&\
-                                                strcmp(Get_Child(ast->cld,0)->nodename,"EXP" ) == 0)
+                                                strcmp(Get_Child(ast->cld,0)->nodename,"Exp" ) == 0)
                                         ;
                                 else if(Count_Child(ast->cld) == 3 &&\
                                                 strcmp(Get_Child(ast->cld,1)->nodename,"DOT" ) == 0)
@@ -334,7 +378,9 @@ Type Handle_Exp(struct node *ast)
                                         if(t1 == NULL);
                                         //Error type 6
                                         else
-                                        printf("Error type 6 at Line %d: The left-hand side of an assignment must be a varia-ble\n",ast->cld->lineno);
+                                        {
+                                                printf("Error type 6 at Line %d: The left-hand side of an assignment must be a varia-ble\n",ast->cld->lineno);
+                                        }
                                         return NULL;
                                 }
                                 if(!TypeEqual(t1,t2))
@@ -375,7 +421,7 @@ Type Handle_Exp(struct node *ast)
                        
                 
 
-                if(Get_Child(ast,1)->typeno == 5 && \
+                if(Get_Child(ast,1)->typeno == 6 && \
                                 strcmp(Get_Child(ast,1)->nodename,"RELOP")== 0)
                 {
                         if(!(t1->kind == BASIC && t2->kind == BASIC && t1->basic == t2->basic && t1->basic == 1) )
@@ -509,7 +555,7 @@ Type Handle_Exp(struct node *ast)
                  *    |NOT Exp
                  *
                  */
-                if(strcmp(Get_Child(ast,0)->special_val,"MINUS") == 0)
+                if(strcmp(Get_Child(ast,0)->nodename,"MINUS") == 0)
                 {
                         if(t2->kind == BASIC && (t2->basic == 1|| t2->basic == 2))
                             return t2;
@@ -519,7 +565,7 @@ Type Handle_Exp(struct node *ast)
                                 //error type 7
                         }
                 }
-                else if(strcmp(Get_Child(ast,0)->special_val,"NOT") == 0)
+                else if(strcmp(Get_Child(ast,0)->nodename,"NOT") == 0)
                 {
                         if(t2->kind == BASIC && (t2->basic == 1))
                                 return t2;
@@ -578,6 +624,7 @@ FieldList Handle_VarDec(struct node *root, Type t, int i)
 	if(i == 0){
    // printf("Enter Handle_VarDec\n");
     FieldList f = malloc(sizeof(struct FieldList_));
+	f->var_typeno = 0;
     if(Count_Child(root) == 1)
     {
      //       printf("VarDec ->ID\n");
@@ -623,22 +670,34 @@ FieldList Handle_VarDec(struct node *root, Type t, int i)
 else
 {
        // printf("Enter local array\n");
-        FieldList f = malloc(sizeof(struct FieldList_));
 	if (Count_Child(root) == 1)
 	{
-     //           printf("xxxxxxxxxxxxxvvvvvvvvv\n");
+           //     printf("xxxxxxxxxxxxxvvvvvvvvv\n");
+        FieldList f = malloc(sizeof(struct FieldList_));
+		f->var_typeno = 2;
 		strcpy(f->name, root->cld->special_val);
 		f->type = t;
+        f->var_typeno = i;
         if(Search_Symbol_name(f->name))
         {
                 printf("?Error type 3 at Line %d:  Redefined variable \"%s\"\n",root->cld->lineno,f->name);
                 //redefined var
                 return NULL;
         }
-        else
 		Insert_Symbol_Var(f);
 		return f;
 	}
+    else if(Count_Child(root) == 4)
+    {
+        struct node *vardec = root->cld;
+        Type t1 = malloc(sizeof(struct Type_));
+        t1->kind = ARRAY;
+        t1->array.size = atoi(root->cld->bro->bro->special_val);
+        t1->array.elem = t;
+        Handle_VarDec(vardec,t1,i);
+    }
+    else assert(0);
+    /*
 	else if (Count_Child(root) == 4 && Count_Child(Get_Child(root, 0)) == 1)
 	{
         //    printf("Enter array[]\n");
@@ -685,7 +744,7 @@ else
 		return f;
         }
                 return NULL;
-	}
+	}*/
 }
 }
 /* Specifier : Type {}
@@ -980,18 +1039,17 @@ FieldList Handle_DecList(struct node *root ,Type t, int i)
         else {//函数的局部变量定义
 		/*TODO*/
 
-
 		if (Count_Child(root->cld) == 1)
 		{
 			struct node *vardec = root->cld->cld;
-			Handle_VarDec(vardec, t, 1);
-			return NULL;
+			 Handle_VarDec(vardec, t, 2);
+		//	return NULL;
 		}
 		else if (Count_Child(root->cld) == 3)//定义局部变量的同时进行赋值
 		{
 			struct node *vardec = root->cld->cld;
 			struct node *exp = vardec->bro->bro;
-			Handle_VarDec(vardec, t, 1);
+			Handle_VarDec(vardec, t, 2);
 
 			Type exp_type = Handle_Exp(exp);
 			if (!TypeEqual(exp_type, t))
@@ -999,6 +1057,7 @@ FieldList Handle_DecList(struct node *root ,Type t, int i)
 
 		}
 		else assert(0);
+
 
 		if (Count_Child(root) == 1)
 		{
@@ -1011,6 +1070,7 @@ FieldList Handle_DecList(struct node *root ,Type t, int i)
         else {
                 assert(0);
         }
+        return NULL;
 }}
 
 /*ExtDefList: |ExtDef ExtDefList
@@ -1033,18 +1093,31 @@ struct parameter *Handle_VarList(struct node *varlist)
 	//这里把形参作为局部变量存进符号表
 	FieldList new_var = (FieldList)malloc(sizeof(struct FieldList_));
 	struct node* vardec = paramdec->cld->bro;
-	if (strcmp(vardec->cld->nodename, "ID"))//不为id，说明形参出现数组，报错！
+    
+    Handle_VarDec(vardec,p->ptype,1);
+    
+	/*if (strcmp(vardec->cld->nodename, "ID"))//不为id，说明形参出现数组，报错！
 	{
 		//error
+		struct node *id = vardec->cld->cld;
+		strcpy(new_var->name, vardec->cld->special_val);
+		Type t1 = malloc(sizeof(struct Type_));
+		t1->kind = ARRAY;
+		t1->array.size = atoi(vardec->cld->bro->bro->special_val);
+		t1->array.elem = p->ptype;
+		new_var->type = t1;
+		new_var->var_typeno = 1;
+		Insert_Symbol_Var(new_var);
 	}
 	else
 	{
-		strcpy(new_var->name,vardec->cld->special_val);
-                new_var->type=p->ptype;
+		strcpy(new_var->name, vardec->cld->special_val);
+		new_var->type = p->ptype;
+		new_var->var_typeno = 1;
 		Insert_Symbol_Var(new_var);
-	}
+	}*/
 	//end
-
+   // printf("???\n");
 	if (paramdec->bro == NULL)
 	{
 		p->pnext = NULL;
@@ -1086,7 +1159,7 @@ int Handle_FunDec(struct node *fundec, Type t)
 	*/
 	struct func *myfun = (struct func *)malloc(sizeof(struct func));
 	//printf("5\n");
-	myfun->name = func_name;
+	strcpy(myfun->name,func_name);
 	//printf("6\n");
 	myfun->retype = t;
 	myfun->next = NULL;
@@ -1111,7 +1184,6 @@ void Handle_Stmt(struct node *stmt, Type t)
     //printf("num :%d\n",num);
 	if (num == 2)
 	{
-      //           printf("200000\n");
 		Handle_Exp(stmt->cld);
 	}
 	else if (num == 1)
@@ -1142,11 +1214,11 @@ void Handle_Stmt(struct node *stmt, Type t)
 	}
 	else if (num == 5)
 	{
-                 //printf("500000\n");
 		struct node *exp = stmt->cld->bro->bro;
 		struct node *temp = exp->bro->bro;
         Handle_Exp(exp);
 		Handle_Stmt(temp, t);
+
 	}
 }
 int Handle_StmtList(struct node *stmtlist, Type t)
@@ -1177,12 +1249,12 @@ int Handle_CompSt(struct node *compst, Type t)
 	Handle_StmtList(deflist->bro,t); 
            //printf("stmtlist over\n");
        // print_func();
-        // print_var();
+       // print_var();
         // printf("ready to printfunc\n");
-	Realse(func_local_val);//局部变量语句块结束后释放
+//	Realse(func_local_val);//局部变量语句块结束后释放
         
 }
-void Handle_ExtDefList(struct node *root)
+void Handle_ExtDefList(struct node *root) 
 {
 
 /*ExtDefList: |ExtDef ExtDefList
@@ -1212,7 +1284,6 @@ void Handle_ExtDefList(struct node *root)
                         {
              //                   printf("Enter ExtDef -> Specifier ExtDecList SEMI\n");
                                 FieldList f = malloc(sizeof(struct FieldList_)); 
-                          //      printf("???\n");
                                 f = Handle_ExtDecList(Get_Child(extdef,1),t);
                         //        printf("\n");
                         
@@ -1251,7 +1322,7 @@ void Handle_ExtDefList(struct node *root)
 
 FieldList Handle_ExtDecList(struct node *root, Type t)
 {
- /*ExtDecList   |VarDec
+ /*ExtDecList   |VarDec:
               |VarDec COMMA ExtDeclist
 */
        // printf("Enter Handle_ExtDecList!\n");
@@ -1315,6 +1386,50 @@ FieldList Handle_ExtDecList(struct node *root, Type t)
 
 void GoProgram(struct node *root)
 {
+	//Init_Func();
        // printf("Enter GoProgram!\n");
         Handle_ExtDefList(root->cld);
+}
+
+void Free_parameter(struct parameter *head)
+{
+        struct parameter * temp;
+        struct parameter * h=head;
+        while(h!=NULL)
+        {
+            temp=h;
+            h=h->pnext;
+            free(temp->ptype);
+            free(temp);
+        }
+
+}
+void Free_func(struct func* head)
+{
+       struct func* temp;
+       struct func* h=head;
+        while(h!=NULL)
+        {
+            temp=h;
+            h=h->next;
+            Free_parameter(temp->para);
+            free(temp);
+        }
+}
+void Free_var(FieldList head)
+{
+        FieldList temp;
+        FieldList h=head;
+        while(h!=NULL)
+        {
+            temp=h;
+            h=h->next;
+            free(temp->st_type);
+            free(temp);
+        }
+}
+void myfree1()
+{
+    Free_func(funcHead);
+    Free_var(Head);
 }

@@ -1,5 +1,29 @@
+int aa(int k)
+{
+    
+    int p[2][3][4];
+    int i=0,j=0,z=0;
+    while(i<2)
+    {
+	j = 0;
+        while(j<3)
+        {
+	    z = 0;
+            while(z<4)
+            {
+                p[i][j][z]=i*j*z;
+                z=z+1;
+            }
+            j=j+1;
+        }
+        i=i+1;
+    }
+    write(p[1][2][3]);
+    return 0;
+}
 int main()
 {
-        float j = 1.7;
-        return j;
+        int ll;
+	    aa(ll);
+        return 0;
 }

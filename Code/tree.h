@@ -23,6 +23,8 @@ struct node {
 
 struct node* nodelist[7];
 
+void Free_tree(struct node *head);
+
 void initlist();
 float char_to_float(char *a);
 struct node* leafcreate(char *, int);

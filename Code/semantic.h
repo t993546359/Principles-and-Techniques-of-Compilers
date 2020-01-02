@@ -29,19 +29,27 @@ struct FieldList_
         Type type;
         FieldList next;
         FieldList st_type;
+        int var_no;
+		int var_typeno;//0:全局  1:形参   2:局部；
 };
 struct parameter { //函数各形参的类型，以链表方式储存
 	Type ptype;
 	struct parameter *pnext;
 };
 struct func { //函数
-	char *name;
+	char name[32];
 	Type retype;
 	int pnum;
 	struct parameter * para;
 	struct func *next;
 }*funcHead, *funcTail;
 
+void Free_parameter(struct parameter *head);
+void Free_func(struct func* head);
+void Free_var(FieldList head);
+void myfree1();
+
+void Init_Func();
 struct node *Get_Child(struct node *root,int i);
 unsigned int Count_Child(struct node *root);
 unsigned int hash_pjw(char *name);

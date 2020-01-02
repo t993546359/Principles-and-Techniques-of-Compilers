@@ -1,5 +1,9 @@
 int main()
 {
+        struct A
+        {
+           int k;
+        }; 
         int i[10];
-        i[1.5] = 10;
+        i[1] = 10;
 }

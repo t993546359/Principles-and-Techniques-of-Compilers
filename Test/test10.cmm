@@ -1,5 +1,27 @@
+int myco(int a, int b[17])
+{
+       int i=0;
+       while(i<17)
+       {
+          b[i]=(30-i)*2;
+          i=i+1;
+       }
+       if((a>6) && (7>6))
+          write(b[3]);
+       else if(a< -3)
+          write(b[11]);
+       return 1;
+}
+int aa(int t)
+{
+    return (-t);
+    
+}
 int main()
 {
-        int i;
-        i(10);
+     int ll[17];
+     int k=7;
+     int gg=(myco(k,ll[17]));
+     
+     return 0;
 }

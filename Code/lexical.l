@@ -46,7 +46,7 @@ AERROR .
 %%
 
 {TYPE} {yylval.o=leafcreate("TYPE", yylineno); return TYPE;}
-{STRUCT} {yylval.o=leafcreate("STRUCT", yylineno); return STRUCT;}  
+{STRUCT} {yylval.o=leafcreate("STRUCT", yylineno);return STRUCT;}  
 {RETURN} {yylval.o=leafcreate("RETURN", yylineno);return RETURN;}
 {IF}   {yylval.o=leafcreate("IF", yylineno); return IF;}
 {ELSE} {yylval.o=leafcreate("ELSE", yylineno); return ELSE;}

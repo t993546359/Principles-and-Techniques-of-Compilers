@@ -12,8 +12,16 @@ int main(int argc, char** argv)
   }
   yyrestart(f);
   yyparse();
-  Init_Hash();  
+  Init_Hash();
+  Init_Func();
   GoProgram(root);
+  Translate_Program(root);
+  Print_InterCode(argv[2]);
+
+  Free_tree(root);
+  myfree1();
+  myfree2();
+ 
   return 0;
 }
 
